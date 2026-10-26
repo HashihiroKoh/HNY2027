@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width", initial-scale=1.0">
+    <title>Happy New Year</title>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+      AFRAME.registerComponent("start", {
+        init: function () {
+          //this.el.addEventListener("click", function (e) {
+            this.el.addEventListener("mousedown", function (e) {
+              if(!onStart){
+                OpenDoor();
+              }   
+          });
+        },
+      });
+    </script>
+    <style>
+      /* すべての要素を画面全体に固定 */
+      #camera-view,
+      #aframe-back_container,
+      #fireworks-container,
+      #aframe-front_container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      /* 1. 一番奥：カメラ映像 */
+      #camera-view {
+        object-fit: cover;
+        z-index: 1;
+      }
+      /* 2. 三番目：A-Frameの扉とお花畑のオブジェクト */
+      #aframe-back_container {
+        z-index: 2;
+      }
+      /* 3. 二番目：花火のエフェクト */
+      #fireworks-container {
+        position: fixed;
+        left: 0;
+        width: 100%;
+        height: 100%;         /* 高さの調整 */
+        top: auto;           /* topの固定を解除 */
+        bottom: 0;           /* 画面の一番下に配置 */
+        background-color: transparent;
+        z-index: 3;
+        pointer-events: none; /* 花火越しにA-Frameをクリックできるようにする */
+      }
+      /* 3. 一番手前：A-Frameの3Dオブジェクト */
+      #aframe-front_container {
+        z-index: 4;
+      }
+    </style>
+  </head>
+  <body>
+    <video id="camera-view" autoplay playsinline muted></video>
+    <div id="aframe-back_container">
+      <a-scene embedded xr-mode-ui="enabled: false" renderer="alpha: true;">
+        <a-assets>
+          <img id="flower" src="assets/grass.jpg" crossorigin="anonymous"></img>
+        </a-assets>
+        <a-asset-item id="rightDoor" src="assets/R-Door.glb"></a-asset-item>
+        <a-asset-item id="leftDoor" src="assets/L-Door.glb"></a-asset-item>
+        <a-camera rotation="0 0 0" position="0 0 0">
+          <a-circle src="#flower" position="0 5 -15" radius="3.8"></a-circle>
+          <a-entity id="left" gltf-model="#leftDoor" position="0 2 -7" scale="1.6 1.6 1"></a-entity>  
+          <a-entity id="right" gltf-model="#rightDoor" position="0 2 -7" scale="1.6 1.6 1"></a-entity>
+        </a-camera>
+      </a-scene>
+    </div>
+    <div id="fireworks-container"></div>
+    <div id="aframe-front_container">
+      <a-scene embedded xr-mode-ui="enabled: false" renderer="alpha: true;">
+        <a-assets>
+          <img id="maki" src="assets/maki.png" crossorigin="anonymous"></img>
+          <img id="sevengod" src="assets/SevenGod.png" crossorigin="anonymous"></img>
+          <audio id="springsea" src="assets/SpringSea.mp3" preload="auto"></audio>
+          <audio id="opendoor" src="assets/OpenDoor.mp3" preload="auto"></audio>
+          <audio id="openmaki" src="assets/Dodon.mp3" preload="auto"></audio>
+          <audio id="openmaki2" src="assets/DonPahu.mp3" preload="auto"></audio>
+          <audio id="fade" src="assets/Ki.mp3" preload="auto"></audio>
+        </a-assets>
+        <a-asset-item id="sheep" src="assets/Sheep.glb"></a-asset-item>
+        <a-asset-item id="sheep2" src="assets/Sheep2.glb"></a-asset-item>
+        <a-asset-item id="sheep3" src="assets/Sheep3.glb"></a-asset-item>
+        <a-asset-item id="sheep4" src="assets/Sheep4.glb"></a-asset-item>
+        <a-asset-item id="kadomatsu" src="assets/kadomatsu.glb"></a-asset-item>
+        <a-sound id="sound" position="0 0 0" sound="src: #springsea; autoplay: false; loop:true" volume="0"></a-sound>
+        <a-sound id="open" position="0 0 0" sound="src: #opendoor; autoplay: false; loop:false"></a-sound>
+        <a-sound id="dodon" position="0 0 0" sound="src: #openmaki; autoplay: false; loop:false"></a-sound>
+        <a-sound id="donpahu" position="0 0 0" sound="src: #openmaki2; autoplay: false; loop:false"></a-sound>
+        <a-sound id="ki" position="0 0 0" sound="src: #fade; autoplay: false; loop:false"></a-sound>
+        <a-camera rotation="0 0 0" position="0 0 0">         
+          <a-entity cursor="rayOrigin: mouse"></a-entity>
+          <a-image id="god" src="#sevengod" position="0 3.2 -5" scale="4 1 1" visible="false"></a-image>
+          <a-entity id="kadoL" gltf-model="#kadomatsu" position="-1 -2.8 -5" rotation="0 15 0" scale="0.2 0.1 0.15" visible="false"></a-entity>
+          <a-entity id="kadoR" gltf-model="#kadomatsu" position="1 -2.8 -5" rotation="0 -15 0" scale="0.2 0.1 0.15" visible="false"></a-entity>
+          <a-entity animation-mixer visible="false"
+              id=hitsuji1 gltf-model="#sheep" position="0 4 -15" rotation="20 0 0" scale="0.3 0.3 0.3"
+              animation__0="property: scale; from: 0 0 0; to: 0.2 0.2 0.2; dur: 1000; easing: easeOutQuad;autoplay: false; startEvents: start-trigger"
+              animation__1="property: position; to: 0 -1 -3; dur: 5000; easing: easeOutQuad;autoplay: false; startEvents: animationcomplete__0"
+              animation__fst="property: rotation; to: 0 0 0; dur: 5000; easing: easeOutQuad;autoplay: false; startEvents: animationcomplete__0"
+              animation__2="property: rotation; to: 0 -90 0; dur: 1000; startEvents: animationcomplete__1"
+              animation__3="property: position; to: -1 -1 -3; dur: 1000; startEvents: animationcomplete__2"
+              animation__4="property: rotation; to: 0 25 0; dur: 1000; startEvents: animationcomplete__3"
+              animation__5="property: rotation; to: 0 90 0; dur: 1000; startEvents: end-triggr"
+              animation__6="property: position; to: 0 -1 -3; dur: 1000; startEvents: animationcomplete__5"
+              animation__7="property: rotation; to: 0 180 0; dur: 1000; startEvents: animationcomplete__6"
+              animation__8="property: position; to: 0 4 -15; dur: 5000; startEvents: animationcomplete__7"
+              animation__9="property: scale; to: 0 0 0; dur: 1000; startEvents: animationcomplete__8"
+          ></a-entity>
+          <a-plane id="maki1" src="#maki" position="-1 -1 -3" material="transparent:true; opacity:1" width="0.55" height="0.6" visible="false">
+            <a-text id="makitxt1" position="-0.15, 0.05, 0.1" value="謹" color="black" width="15" font="assets/g_brushtappitsu_freeB-msdf.json" font-image="assets/gbrushtappitsufreeB.png" negate="false"></a-text>
+          </a-plane>
+          <a-entity animation-mixer visible="false"
+              id=hitsuji2 gltf-model="#sheep2" position="0 4 -15" rotation="20 0 0" scale="0.3 0.3 0.3"
+              animation__20="property: scale; from: 0 0 0; to: 0.2 0.2 0.2; dur: 1000; easing: easeOutQuad;autoplay: false; startEvents: start-trigger2"
+              animation__21="property: position; to: 0 -1 -3; dur: 5000; easing: easeOutQuad;autoplay: false; startEvents:animationcomplete__20"
+              animation__2fst="property: rotation; to: 0 0 0; dur: 5000; easing: easeOutQuad;autoplay: false; startEvents:animationcomplete__20"
+              animation__22="property: rotation; to: 0 -90 0; dur: 1000; startEvents: animationcomplete__21"
+              animation__23="property: position; to: -0.35 -1 -3; dur: 1000; startEvents: animationcomplete__22"
+              animation__24="property: rotation; to: 0 5 0; dur: 1000; startEvents: animationcomplete__23"
+              animation__25="property: rotation; to: 0 90 0; dur: 1000; startEvents: end-triggr2"
+              animation__26="property: position; to: 0 -1 -3; dur: 1000; startEvents: animationcomplete__25"
+              animation__27="property: rotation; to: 0 180 0; dur: 1000; startEvents: animationcomplete__26"
+              animation__28="property: position; to: 0 4 -15; dur: 5000; startEvents: animationcomplete__27"
+              animation__29="property: scale; to: 0 0 0; dur: 1000; startEvents: animationcomplete__28"
+          ></a-entity>
+          <a-plane id="maki2" src="#maki" position="-0.35 -1 -3" material="transparent:true; opacity:1" width="0.55" height="0.6" visible="false">
+            <a-text id="makitxt2" position="-0.15, 0.05, 0.1" value="賀" color="black" width="15" font="assets/g_brushtappitsu_freeB-msdf.json" font-image="assets/gbrushtappitsufreeB.png" negate="false"></a-text>
+          </a-plane>
+          <a-entity animation-mixer visible="false"
+              id=hitsuji3 gltf-model="#sheep3" position="0 4 -15" rotation="20 0 0" scale="0.3 0.3 0.3"
+              animation__30="property: scale; from: 0 0 0; to: 0.2 0.2 0.2; dur: 1000; easing: easeOutQuad;autoplay: false; startEvents: start-trigger3"
+              animation__31="property: position; to: 0 -1 -3; dur: 5000; easing: easeOutQuad;autoplay: false; startEvents: animationcomplete__30"
+              animation__3fst="property: rotation; to: 0 0 0; dur: 5000; easing: easeOutQuad;autoplay: false; startEvents: animationcomplete__30"
+              animation__32="property: rotation; to: 0 90 0; dur: 1000; startEvents: animationcomplete__31"
+              animation__33="property: position; to: 0.35 -1 -3; dur: 500; startEvents: animationcomplete__32"
+              animation__34="property: rotation; to: 0 -5 0; dur: 1000; startEvents: animationcomplete__33"
+              animation__35="property: rotation; to: 0 -90 0; dur: 1000; startEvents: end-triggr3"
+              animation__36="property: position; to: 0 -1 -3; dur: 1000; startEvents: animationcomplete__35"
+              animation__37="property: rotation; to: 0 -180 0; dur: 1000; startEvents: animationcomplete__36"
+              animation__38="property: position; to: 0 4 -15; dur: 5000; startEvents: animationcomplete__37"
+              animation__39="property: scale; to: 0 0 0; dur: 1000; startEvents: animationcomplete__38"
+          ></a-entity>
+          <a-plane id="maki3" src="#maki" position="0.35 -1 -3" material="transparent:true; opacity:1" width="0.55" height="0.6" visible="false">
+            <a-text id="makitxt3" position="-0.2, 0.05, 0.1" value="新" color="black" width="15" font="assets/g_brushtappitsu_freeB-msdf.json" font-image="assets/gbrushtappitsufreeB.png" negate="false"></a-text>
+          </a-plane>
+          <a-entity animation-mixer visible="false"
+              id=hitsuji4 gltf-model="#sheep4" position="0 4 -15" rotation="20 0 0" scale="0.3 0.3 0.3"
+              animation__40="property: scale; from: 0 0 0; to: 0.2 0.2 0.2; dur: 1000; easing: easeOutQuad;autoplay: false; startEvents: start-trigger4"
+              animation__41="property: position; to: 0 -1 -3; dur: 5000; easing: easeOutQuad;autoplay: false; startEvents: animationcomplete__40"
+              animation__4fst="property: rotation; to: 0 0 0; dur: 5000; easing: easeOutQuad;autoplay: false; startEvents: animationcomplete__40"
+              animation__42="property: rotation; to: 0 90 0; dur: 1000; startEvents: animationcomplete__41"
+              animation__43="property: position; to: 1 -1 -3; dur: 1000; startEvents: animationcomplete__42"
+              animation__44="property: rotation; to: 0 -25 0; dur: 1000; startEvents: animationcomplete__43"
+              animation__45="property: rotation; to: 0 -90 0; dur: 1000; startEvents: end-triggr4"
+              animation__46="property: position; to: 0 -1 -3; dur: 1000; startEvents: animationcomplete__45"
+              animation__47="property: rotation; to: 0 -180 0; dur: 1000; startEvents: animationcomplete__46"
+              animation__48="property: position; to: 0 4 -15; dur: 5000; startEvents: animationcomplete__47"
+              animation__49="property: scale; to: 0 0 0; dur: 1000; startEvents: animationcomplete__48"
+          ></a-entity>
+          <a-plane id="maki4" src="#maki" position="1 -1 -3" material="transparent:true; opacity:1" width="0.55" height="0.6" visible="false">
+            <a-text id="makitxt4" position="-0.2, 0.05, 0.1" value="年" color="black" width="15" font="assets/g_brushtappitsu_freeB-msdf.json" font-image="assets/gbrushtappitsufreeB.png" negate="false"></a-text>
+          </a-plane>
+          <a-circle start id="door" material="transparent: true; opacity: 0" position="0 1.2 -6" radius="1.5" class="clickable">
+            <a-text position="-1.0 0.8 0" color="white" value="START" width="15"></a-text>
+          </a-circle>  
+          <a-text id ="msg" position="0 -1 -4" width="8" align="center"
+            value="STARTをタップしてね！\n（注）タップすると音が出ます。\n終了すると自動で閉じます。"
+            color="#65D8FF"
+            font="assets/ZenMaruGothic-Bold-msdf.json"
+            font-image="assets/ZenMaruGothic-Bold.png"
+            negate="false"
+          ></a-text>            
+        </a-camera>    
+      </a-scene>
+    </div>
+
+    <script defer type="module">
+      import { Fireworks } from "https://cdn.skypack.dev/fireworks-js";
+
+      // 1. 花火の起動
+      const container = document.getElementById("fireworks-container");
+      const fireworks = new Fireworks(container, {
+        // 背景を透明にするための設定（花火ライブラリ側の背景をクリアにする）
+        background: "transparent",
+      });
+      document.getElementById("hitsuji3").addEventListener("animationcomplete__34", () => {
+        fireworks.start();
+        setTimeout(() => {
+          fireworks.stop();
+        }, 9000);
+      });
+
+      // 2. スマホの背面カメラを起動してvideoタグに流す
+      const video = document.getElementById("camera-view");
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // 背面カメラ（environment）を指定
+        navigator.mediaDevices
+          .getUserMedia({
+            video: { facingMode: "environment" },
+            audio: false,
+          })
+          .then((stream) => {
+            video.srcObject = stream;
+          })
+          .catch((error) => {
+            console.error("カメラの起動に失敗しました:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
